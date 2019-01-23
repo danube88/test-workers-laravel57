@@ -14,7 +14,8 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html":"^5.4.0",
         "components/jquery": "3.3.1",
-        "twbs/bootstrap": "4.1"
+        "twbs/bootstrap": "4.1",
+        "caouecs/laravel-lang":"~3.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
@@ -65,13 +66,15 @@
             "xcopy vendor\\components\\jquery\\jquery.min.js public\\js\\ /E /Y",
             "xcopy vendor\\twbs\\bootstrap\\dist\\css\\bootstrap.min.css public\\css\\ /E /Y",
             "xcopy vendor\\twbs\\bootstrap\\dist\\js\\bootstrap.min.js public\\js\\ /E /Y",
-            "xcopy vendor\\twbs\\bootstrap\\assets\\js\\vendor\\popper.min.js public\\js\\ /E /Y"
+            "xcopy vendor\\twbs\\bootstrap\\assets\\js\\vendor\\popper.min.js public\\js\\ /E /Y",
+            "xcopy vendor\\caouecs\\laravel-lang\\src\\ru resources\\lang\\ru /I /Y"
         ],
         "post-update-cmd": [
             "xcopy vendor\\components\\jquery\\jquery.min.js public\\js\\ /E /Y",
             "xcopy vendor\\twbs\\bootstrap\\dist\\css\\bootstrap.min.css public\\css\\ /E /Y",
             "xcopy vendor\\twbs\\bootstrap\\dist\\js\\bootstrap.min.js public\\js\\ /E /Y",
-            "xcopy vendor\\twbs\\bootstrap\\assets\\js\\vendor\\popper.min.js public\\js\\ /E /Y"
+            "xcopy vendor\\twbs\\bootstrap\\assets\\js\\vendor\\popper.min.js public\\js\\ /E /Y",
+            "xcopy vendor\\caouecs\\laravel-lang\\src\\ru resources\\lang\\ru /I /Y"
         ]
     }
 }
