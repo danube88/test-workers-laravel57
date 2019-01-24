@@ -18,3 +18,7 @@ Route::get('/', function () {
 Route::get('/hierarchy','HierarchyController@index')->name('hierarchy');
 Route::get('/list', 'ListController@index')->name('list');
 Route::get('/list/data/workers', 'ListController@dataWorkers')->name('dataWorkers');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
