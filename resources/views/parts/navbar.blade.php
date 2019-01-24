@@ -9,6 +9,9 @@
       <li class="nav-item hierarchy">
         <a class="nav-link" href="{{ route('hierarchy') }}">Иерархия</a>
       </li>
+      <li class="nav-item list">
+        <a class="nav-link" href="{{ route('list') }}">Список</a>
+      </li>
     </ul>
   </div>
 </nav>
