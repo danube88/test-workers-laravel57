@@ -1,0 +1,58 @@
+.IsRoot {
+    margin-left: 0;
+}
+
+.container {
+  margin-top: 60px;
+}
+
+.Content {
+    min-height: 18px;
+    margin-left:18px;
+}
+
+* html .Content {
+    height: 18px;
+}
+
+.Expand {
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+
+
+.ExpandOpen .Container{
+        display: block;
+}
+
+.ExpandClosed .Container{
+        display: none;
+}
+
+.ExpandOpen .Expand, .ExpandClosed .Expand {
+        cursor: pointer;
+}
+.ExpandLeaf .Expand {
+        cursor: auto;
+}
+
+.ExpandLoading   {
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+
+/*.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+                url('/img/loader.gif')
+                50% 50%
+                no-repeat;
+}*/

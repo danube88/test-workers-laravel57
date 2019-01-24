@@ -12,5 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Redirect::route('hierarchy');
 });
+
+Route::get('/hierarchy','HierarchyController@index')->name('hierarchy');
