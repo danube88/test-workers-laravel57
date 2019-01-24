@@ -1,0 +1,11 @@
+{
+  "name": "dataTables",
+  "version": "0.0.1",
+  "dependencies": {
+    "datatables.net-bs4":"*"
+  },
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": ""
+}
