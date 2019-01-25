@@ -13,5 +13,28 @@
         <a class="nav-link" href="{{ route('list') }}">Список</a>
       </li>
     </ul>
+    <ul class="navbar-nav px-3">
+      @guest
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+        </li>
+        @if (Route::has('register'))
+          <li class="nav-item">
+              <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+          </li>
+        @endif
+      @else
+        <span class="navbar-brand">{{ Auth::user()->name }}</span>
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="{{ route('logout') }}"
+            onclick="event.preventDefault();
+                     document.getElementById('logout-form').submit();">
+            Выход
+          </a>
+          {!! Form::open(['route' => 'logout', 'id' => 'logout-form']) !!}
+          {!! Form::close() !!}
+        </li>
+      @endguest
+    </ul>
   </div>
 </nav>
