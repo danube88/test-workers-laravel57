@@ -1,0 +1,25 @@
+#tableWorkers_wrapper .row
+  {
+    min-width: 100%;
+  }
+#tableWorkers_wrapper > div:nth-child(2) > div
+  {
+    min-width: 100%;
+  }
+#tableWorkers_paginate > ul
+  {
+    float: right;
+  }
+#tableWorkers_filter > label
+  {
+    float: right;
+  }
+#tableWorkers_length > label
+  {
+    float: left;
+  }
+
+.container-fluid
+  {
+    margin-top: 60px;
+  }

@@ -22,3 +22,4 @@ Route::get('/list/data/workers', 'ListController@dataWorkers')->name('dataWorker
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home/data/workers', 'HomeController@dataWorkers')->name('homeWorkers');

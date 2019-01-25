@@ -6,12 +6,18 @@
 
   <div class="collapse navbar-collapse" id="navbars">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item hierarchy">
-        <a class="nav-link" href="{{ route('hierarchy') }}">Иерархия</a>
-      </li>
-      <li class="nav-item list">
-        <a class="nav-link" href="{{ route('list') }}">Список</a>
-      </li>
+      @guest
+        <li class="nav-item hierarchy">
+          <a class="nav-link" href="{{ route('hierarchy') }}">Иерархия</a>
+        </li>
+        <li class="nav-item list">
+          <a class="nav-link" href="{{ route('list') }}">Список</a>
+        </li>
+      @else
+        <li class="nav-item list">
+          <a class="nav-link" href="{{ route('home') }}">Список</a>
+        </li>
+      @endguest
     </ul>
     <ul class="navbar-nav px-3">
       @guest
