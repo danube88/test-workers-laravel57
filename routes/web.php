@@ -21,5 +21,17 @@ Route::get('/list/data/workers', 'ListController@dataWorkers')->name('dataWorker
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/home/data/workers', 'HomeController@dataWorkers')->name('homeWorkers');
+Route::group(['prefix'=>'home'],function(){
+  Route::get('/', 'HomeController@index')->name('home');
+  Route::get('/data/workers', 'HomeController@dataWorkers')->name('homeWorkers');
+  Route::resource('/crud', 'CRUDController',
+                  [ 'only' => ['index','store','edit','update','destroy'],
+                    'except'=>['show','create'],
+                    'names' => [
+                              'index'=>'indexWorker',
+                              'store'=>'addWorker'
+                              ]
+                  ]);
+  Route::get('/data/head', 'HomeController@listHead')->name('listHead');
+  Route::get('/data/worker', 'HomeController@dataWorker')->name('dataWorker');
+});
