@@ -20,7 +20,7 @@ class CRUDController extends Controller
     public function index()
     {
         //
-        return;
+        abort(404);
     }
 
     /**
@@ -31,6 +31,7 @@ class CRUDController extends Controller
     public function create()
     {
         //
+        abort(404);
     }
 
     /**
@@ -90,6 +91,7 @@ class CRUDController extends Controller
     public function show($id)
     {
         //
+        abort(404);
     }
 
     /**
@@ -101,6 +103,7 @@ class CRUDController extends Controller
     public function edit($id)
     {
         //
+        abort(404);
     }
 
     /**
