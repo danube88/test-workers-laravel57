@@ -22,12 +22,14 @@
 @endsection
 
 @section('content')
-<div class="modal"></div>
 <div class="container-fluid">
-  <h1 class="h2 page-header">Список сотрудников</h1>
-    <br />
-    <table id="tableWorkers" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
+  <div class="row">
+    <div class="col-12 col-sm-12">
+      <h1 class="h2 page-header">Список сотрудников</h1>
+      <br />
+      <div class="table-responsive">
+        <table id="tableWorkers" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
             <tr>
                 <th>#</th>
                 <th>Ф.И.О.</th>
@@ -37,8 +39,11 @@
                 <th>Дата приема на работу</th>
                 <th>Размер заработной платы</th>
             </tr>
-        </thead>
-    </table>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
