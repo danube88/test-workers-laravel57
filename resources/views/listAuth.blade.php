@@ -37,6 +37,7 @@
           <thead>
             <tr>
                 <th>#</th>
+                <th>Фото</th>
                 <th>Ф.И.О.</th>
                 <th>Должность</th>
                 <th>Ф.И.О. начальника</th>
@@ -79,6 +80,10 @@
       },
       columns: [
           { data: 'table_number', name: 'table_number' },
+          { data: 'photo', name: 'photo',
+            render: function(data, type, row) {
+                return '<img src="'+data+'?'+Math.random()+'" width="70px" height="105px" />';
+              }, orderable: false, searchable: false },
           { data: 'nameWorker', name: 'nameWorker'},
           { data: 'position', name:'position' },
           { data: 'nameHead', name: 'nameHead'},
@@ -213,8 +218,11 @@
         $('#errorBirthday').removeClass('d-none').addClass('d-block');
         return;
       }
-
+      var file = $('#file')[0].files[0];
       var form_data = new FormData();
+      if (file) {
+        form_data.append('photo', file);
+      }
       form_data.append('head_id', head_id);
       form_data.append('surname', $('#surname').val());
       form_data.append('name',$('#name').val());
@@ -325,6 +333,7 @@
           $('#position').val(data.positionName);
           $('#salary').val(data.salary);
           $('#date').val(data.reception_date);
+          $('#photo').attr('src',data.photo);
           $('.cardName').html('ИЗМИНЕНИЕ');
 
           $('#addSave').attr('disabled',true);
@@ -475,6 +484,28 @@
       });
     });
 
+    $('#file').change(function() {
+      var input = $(this)[0];
+      if (input.files && input.files[0]) {
+        if (input.files[0].type.match('image.*')) {
+          if (input.files[0].size > 1048576) {
+            alert('размер файла более 1MB');
+          } else {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              $('#photo').attr('src', e.target.result);
+              $('.file').html(input.files[0].name);
+            }
+              reader.readAsDataURL(input.files[0]);
+          }
+        } else {
+          alert('ошибка, не изображение');
+        }
+      } else {
+        alert('Error!');
+      }
+    });
+
     function hideFieldErrors(){
       $('#errorTableNumber').removeClass('d-block').addClass('d-none');
       $('#errorHeadName').removeClass('d-block').addClass('d-none');
@@ -485,6 +516,7 @@
       $('#errorPosition').removeClass('d-block').addClass('d-none');
       $('#errorSalary').removeClass('d-block').addClass('d-none');
       $('#errorDate').removeClass('d-block').addClass('d-none');
+      $('#errorPhoto').removeClass('d-block').addClass('d-none');
     }
 
     function cleanFieldModal() {
@@ -492,6 +524,9 @@
       $('#headName').attr('disabled',true);
       $('#listHead').html('');
       $('#tableNumber').val('');
+      $('#photo').attr('src','../img/example.jpg');
+      $('.file').html('Выберите файл');
+      $('#file').val('');
       $('#surname').val('');
       $('#name').val('');
       $('#patronymic').val('');

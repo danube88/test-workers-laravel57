@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use App\Position;
 use App\Worker;
 use App\Subordination;
@@ -48,6 +49,7 @@ class CRUDController extends Controller
         $rules = [
             'head_id' => 'numeric',
             'table_number' => 'required|min:6|max:6|unique:workers',
+            'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png',
             'surname' => 'required|min:2|max:128',
             'name' => 'required|min:2|max:128',
             'patronymic' => 'required|min:2|max:128',
@@ -71,6 +73,19 @@ class CRUDController extends Controller
             'salary' => $input['salary'],
             'reception_date' => $input['reception_date']
           ]);
+
+          if($request->hasFile('photo')){
+            $file = $request->file('photo');
+            $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
+            $file->move(public_path().'/img/photo',$input['photo']);
+            Worker::find($worker->id)->update([
+              'photo' => $input['photo']
+            ]);
+          } else {
+            Worker::find($worker->id)->update([
+              'photo' => NULL
+            ]);
+          }
 
           if ($input['head_id'] != 0) {
             Subordination::create([
@@ -122,6 +137,7 @@ class CRUDController extends Controller
         $rules = [
             'head_id' => 'numeric',
             'table_number' => ['required','min:6','max:6',Rule::unique('workers')->ignore($worker->id),],
+            'photo' => 'file|image|max:2024|mimes:jpeg,jpg,bmp,png',
             'surname' => 'required|min:2|max:128',
             'name' => 'required|min:2|max:128',
             'patronymic' => 'required|min:2|max:128',
@@ -146,6 +162,15 @@ class CRUDController extends Controller
             'reception_date' => $input['reception_date'],
           ]);
 
+          if($request->hasFile('photo')){
+            $file = $request->file('photo');
+            $input['photo'] = $worker->id.'.'.$file->guessClientExtension();
+            $file->move(public_path().'/img/photo',$input['photo']);
+            Worker::find($worker->id)->update([
+              'photo' => $input['photo']
+            ]);
+          }
+
           if ($input['head_id'] != 0) {
             $subordination = Subordination::updateOrCreate(
               ['subordinate_id' => $worker->id],
@@ -154,7 +179,10 @@ class CRUDController extends Controller
           } else {
             Subordination::where('subordinate_id','=',$worker->id)->delete();
           }
-          return Response::json(array('data'=>'Карточка сотрудника №'.$input['table_number'].' изменена'));
+          return Response::json(array(
+            'data'=>'Карточка сотрудника №'.$input['table_number'].' изменена',
+            'img'=>(file_exists(public_path().'/img/photo/'.$input['photo']))?$input['photo']:'../img/example.jpg'
+          ));
         }
     }
 
