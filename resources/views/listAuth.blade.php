@@ -82,7 +82,7 @@
           { data: 'table_number', name: 'table_number' },
           { data: 'photo', name: 'photo',
             render: function(data, type, row) {
-                return '<img src="'+data+'?'+Math.random()+'" width="70px" height="105px" />';
+                return '<img src="'+data+/*'?'+Math.random()+*/'" width="70px" height="105px" />';
               }, orderable: false, searchable: false },
           { data: 'nameWorker', name: 'nameWorker'},
           { data: 'position', name:'position' },
@@ -283,6 +283,10 @@
               $('#errorDate').html('<div class="alert alert-danger" role="alert">'+data.errors.reception_date+'</div>');
               $('#errorDate').removeClass('d-none').addClass('d-block');
             }
+            if(data.errors.photo){
+              $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+data.errors.photo+'</div>');
+              $('#errorPhoto').removeClass('d-none').addClass('d-block');
+            }
           } else {
             $('#cardModal').modal('hide');
             alert(data);
@@ -333,7 +337,7 @@
           $('#position').val(data.positionName);
           $('#salary').val(data.salary);
           $('#date').val(data.reception_date);
-          $('#photo').attr('src',data.photo);
+          $('#photo').attr('src',data.photo/*+'?'+Math.random()*/);
           $('.cardName').html('ИЗМИНЕНИЕ');
 
           $('#addSave').attr('disabled',true);
@@ -409,7 +413,12 @@
         return;
       }
 
+      var file = $('#file')[0].files[0];
+
       var form_edit = new FormData();
+      if (file) {
+        form_edit.append('photo', file);
+      }
       form_edit.append('_method', 'PUT');
       form_edit.append('head_id', head_id);
       form_edit.append('surname', $('#surname').val());

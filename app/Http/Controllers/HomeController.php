@@ -97,8 +97,12 @@ class HomeController extends Controller
         $query->whereRaw("w.salary like ?", ["%$keyword%"]);
       })
       ->editColumn('photo', function ($worker) {
-        if(($worker->photo != null)&&(file_exists(public_path()."img/photo/mini/".$worker->photo))){
-          return $worker->photo;
+        if($worker->photo != null){
+          if(file_exists(public_path()."/img/photo/mini/".$worker->photo)){
+            return '../img/photo/mini/'.$worker->photo.'?'.rand();
+          } else {
+            return '../img/example_mini.jpg';
+          }
         } else {
           return '../img/example_mini.jpg';
         };
@@ -173,7 +177,7 @@ class HomeController extends Controller
         $listHead = $this->listHeadStr($worker->position->level);
         unset($worker->position);
         if (($worker->photo != NULL)&&(file_exists(public_path().'/img/photo/'.$worker->photo))) {
-          $worker->photo = '/img/photo/'.$worker->photo;
+          $worker->photo = '../img/photo/'.$worker->photo.'?'.rand();
         } else {
           $worker->photo = '../img/example.jpg';
         }

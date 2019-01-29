@@ -10,6 +10,7 @@ use App\Worker;
 use App\Subordination;
 use Response;
 use Validator;
+use Image;
 
 class CRUDController extends Controller
 {
@@ -77,7 +78,12 @@ class CRUDController extends Controller
           if($request->hasFile('photo')){
             $file = $request->file('photo');
             $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
-            $file->move(public_path().'/img/photo',$input['photo']);
+            //$file->move(public_path().'/img/photo',$input['photo']);
+            Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+            $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+            $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
             Worker::find($worker->id)->update([
               'photo' => $input['photo']
             ]);
@@ -164,8 +170,14 @@ class CRUDController extends Controller
 
           if($request->hasFile('photo')){
             $file = $request->file('photo');
-            $input['photo'] = $worker->id.'.'.$file->guessClientExtension();
-            $file->move(public_path().'/img/photo',$input['photo']);
+            $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
+            //$file->move(public_path().'/img/photo',$input['photo']);
+
+            Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+            $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+            $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
             Worker::find($worker->id)->update([
               'photo' => $input['photo']
             ]);
@@ -179,9 +191,10 @@ class CRUDController extends Controller
           } else {
             Subordination::where('subordinate_id','=',$worker->id)->delete();
           }
+          $photo = Worker::where('id',$worker->id)->first()->photo;
           return Response::json(array(
             'data'=>'Карточка сотрудника №'.$input['table_number'].' изменена',
-            'img'=>(file_exists(public_path().'/img/photo/'.$input['photo']))?$input['photo']:'../img/example.jpg'
+            'img'=>(file_exists(public_path().'/img/photo/mini/'.$photo))?'../img/photo/mini/'.$photo.'?'.rand():'../img/example_mini.jpg'
           ));
         }
     }
@@ -201,6 +214,12 @@ class CRUDController extends Controller
           return Response::json(array('errors' => ['data'=>'Данный сотрудник имеет подчиненных, и не может быть удален']));
         } else {
           Subordination::where('subordinate_id','=',$worker->id)->delete();
+          if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
+            unlink(public_path().'/img/photo/mini/'.$worker->photo);
+          }
+          if(file_exists(public_path().'/img/photo/'.$worker->photo)){
+            unlink(public_path().'/img/photo/'.$worker->photo);
+          }
           Worker::find($worker->id)->delete();
           return 'Карточка '.$worker->table_number.' сотрудника удалена';
         }
