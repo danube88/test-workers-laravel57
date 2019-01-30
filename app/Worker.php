@@ -9,6 +9,7 @@ class Worker extends Model
     //
     protected $fillable = [
         'table_number',
+        'photo',
         'surname',
         'name',
         'patronymic',

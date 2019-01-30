@@ -46,6 +46,7 @@ class HomeController extends Controller
             ->leftJoin('workers as wb', 'wb.id', '=', 's.head_id')
             ->select([
               "w.table_number",
+              "w.photo",
               "w.birthday",
               DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic) as nameWorker"),
               "w.reception_date",
@@ -94,6 +95,17 @@ class HomeController extends Controller
       })
       ->filterColumn('salary', function ($query, $keyword) {
         $query->whereRaw("w.salary like ?", ["%$keyword%"]);
+      })
+      ->editColumn('photo', function ($worker) {
+        if($worker->photo != null){
+          if(file_exists(public_path()."/img/photo/mini/".$worker->photo)){
+            return '../img/photo/mini/'.$worker->photo.'?'.rand();
+          } else {
+            return '../img/example_mini.jpg';
+          }
+        } else {
+          return '../img/example_mini.jpg';
+        };
       })
       ->make(true);
     }
@@ -164,7 +176,11 @@ class HomeController extends Controller
         $worker->level = $worker->position->level;
         $listHead = $this->listHeadStr($worker->position->level);
         unset($worker->position);
-
+        if (($worker->photo != NULL)&&(file_exists(public_path().'/img/photo/'.$worker->photo))) {
+          $worker->photo = '../img/photo/'.$worker->photo.'?'.rand();
+        } else {
+          $worker->photo = '../img/example.jpg';
+        }
         $worker->listHead = $listHead;
         return Response::json($worker);
       }

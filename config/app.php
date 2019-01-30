@@ -178,6 +178,8 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         //DataTables
         Yajra\DataTables\DataTablesServiceProvider::class,
+        //Image
+        Intervention\Image\ImageServiceProvider::class,
     ],
 
     /*
@@ -231,6 +233,8 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         //DataTables
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        //Image
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
 ];

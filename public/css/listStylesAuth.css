@@ -39,6 +39,14 @@
     margin-bottom: 10px;
   }
 
- tr:hover{
+ tr:hover
+  {
    cursor: pointer;
- }
+  }
+
+ .cleanPhoto
+  {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }

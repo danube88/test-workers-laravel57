@@ -22,7 +22,23 @@
       <div class="modal-body">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-12 col-sm-12">
+            <div class="col-6 col-sm-6 center">
+              <label for="title">Фото</label>
+              <div id="errorPhoto" class="d-none"></div>
+              <div class="cleanPhoto">
+                <button id="cleanPhoto" type="button" class="btn btn-secondary" data-placement="left" title="Удалить фото">
+                  <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+              <img id="photo" src="../img/example.jpg" alt="..." width="200px" class="rounded mx-auto d-block img-fluid img-thumbnail"/>
+              <sub>(*Ремомендация фото: 200х300px, размер файла не более 1МВ)</sub>
+              </br></br>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="file" accept="image/*" lang="ru"/>
+                <label class="file custom-file-label" for="customFile">Выберите файл</label>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6">
               {{ Form::label('title','Фамилия') }}
               <div id="errorSurname" class="d-none"></div>
               {{ Form::text('surname',null,['id'=>'surname','class'=>'form-control form-control-sm','placeholder'=>'Введите: Фамилию']) }}
@@ -68,6 +84,8 @@
                   <span class="input-group-text">0,00</span>
                 </div>
               </div>
+            </div>
+            <div class="col-12 col-sm-12">
               <label for="title">Начальник (Таб.номер.Ф.И.О. / должность)</label>
               <div class="input-group">
                 <div id="errorHeadName" class="d-none"></div>

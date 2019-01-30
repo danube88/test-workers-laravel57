@@ -28,16 +28,17 @@
       <h1 class="h2 page-header">Список сотрудников</h1>
       <br />
       <div class="table-responsive">
-        <table id="tableWorkers" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <table id="tableWorkers" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
             <tr>
-                <th>#</th>
-                <th>Ф.И.О.</th>
-                <th>Должность</th>
-                <th>Ф.И.О. начальника</th>
-                <th>Дата рождения</th>
-                <th>Дата приема на работу</th>
-                <th>Размер заработной платы</th>
+              <th>#</th>
+              <th>Фото</th>
+              <th>Ф.И.О.</th>
+              <th>Должность</th>
+              <th>Ф.И.О. начальника</th>
+              <th>Дата рождения</th>
+              <th>Дата приема на работу</th>
+              <th>Размер заработной платы</th>
             </tr>
           </thead>
         </table>
@@ -64,6 +65,10 @@
       },
       columns: [
           { data: 'table_number', name: 'table_number' },
+          { data: 'photo', name: 'photo',
+            render: function(data, type, row) {
+                return '<img src="'+data+{{--/*'?'+Math.random()+*/--}}'" width="70px" height="105px" />';
+              }, orderable: false, searchable: false },
           { data: 'nameWorker', name: 'nameWorker', width: '200px' },
           { data: 'position', name:'position' },
           { data: 'nameHead', name: 'nameHead', width: '200px' },
@@ -71,7 +76,7 @@
           { data: 'reception_date', name: 'reception_date', width: '80px' },
           { data: 'salary', name: 'salary', width: '110px' }
       ],
-      pageLength: 50,
+      pageLength: 10,
       language: {
         "loadingRecords": "Загрузка...",
         "processing": "Подождите...",

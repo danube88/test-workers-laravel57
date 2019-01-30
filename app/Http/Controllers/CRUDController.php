@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use App\Position;
 use App\Worker;
 use App\Subordination;
 use Response;
 use Validator;
+use Image;
 
 class CRUDController extends Controller
 {
@@ -48,6 +50,8 @@ class CRUDController extends Controller
         $rules = [
             'head_id' => 'numeric',
             'table_number' => 'required|min:6|max:6|unique:workers',
+            'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png',
+            'photodel' => 'boolean',
             'surname' => 'required|min:2|max:128',
             'name' => 'required|min:2|max:128',
             'patronymic' => 'required|min:2|max:128',
@@ -72,13 +76,31 @@ class CRUDController extends Controller
             'reception_date' => $input['reception_date']
           ]);
 
+          if($request->hasFile('photo') && $input['photodel'] == false){
+            $file = $request->file('photo');
+            $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
+            //$file->move(public_path().'/img/photo',$input['photo']);
+            Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+            $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+            $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
+            Worker::find($worker->id)->update([
+              'photo' => $input['photo']
+            ]);
+          } else {
+            Worker::find($worker->id)->update([
+              'photo' => NULL
+            ]);
+          }
+
           if ($input['head_id'] != 0) {
             Subordination::create([
               'head_id' => $input['head_id'],
               'subordinate_id' => $worker->id
             ]);
           }
-          return 'Карточка сотрудника №'.$input['table_number'].' создана в БД';
+          return Response::json(['data'=>'Карточка сотрудника №'.$input['table_number'].' создана в БД']);
         }
     }
 
@@ -122,6 +144,8 @@ class CRUDController extends Controller
         $rules = [
             'head_id' => 'numeric',
             'table_number' => ['required','min:6','max:6',Rule::unique('workers')->ignore($worker->id),],
+            'photo' => 'file|image|max:2024|mimes:jpeg,jpg,bmp,png',
+            'photodel' => 'boolean',
             'surname' => 'required|min:2|max:128',
             'name' => 'required|min:2|max:128',
             'patronymic' => 'required|min:2|max:128',
@@ -146,6 +170,21 @@ class CRUDController extends Controller
             'reception_date' => $input['reception_date'],
           ]);
 
+          if($request->hasFile('photo')){
+            $file = $request->file('photo');
+            $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
+            //$file->move(public_path().'/img/photo',$input['photo']);
+
+            Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+            $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+            $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
+            Worker::find($worker->id)->update([
+              'photo' => $input['photo']
+            ]);
+          }
+
           if ($input['head_id'] != 0) {
             $subordination = Subordination::updateOrCreate(
               ['subordinate_id' => $worker->id],
@@ -154,7 +193,24 @@ class CRUDController extends Controller
           } else {
             Subordination::where('subordinate_id','=',$worker->id)->delete();
           }
-          return Response::json(array('data'=>'Карточка сотрудника №'.$input['table_number'].' изменена'));
+
+          if ($input['photodel']) {
+            if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
+              unlink(public_path().'/img/photo/mini/'.$worker->photo);
+            }
+            if(file_exists(public_path().'/img/photo/'.$worker->photo)){
+              unlink(public_path().'/img/photo/'.$worker->photo);
+            }
+            Worker::find($worker->id)->update([
+              'photo' => NULL
+            ]);
+          }
+
+          $photo = Worker::where('id',$worker->id)->first()->photo;
+          return Response::json(array(
+            'data'=>'Карточка сотрудника №'.$input['table_number'].' изменена',
+            //'img'=>(file_exists(public_path().'/img/photo/mini/'.$photo))?'../img/photo/mini/'.$photo.'?'.rand():'../img/example_mini.jpg'
+          ));
         }
     }
 
@@ -173,8 +229,14 @@ class CRUDController extends Controller
           return Response::json(array('errors' => ['data'=>'Данный сотрудник имеет подчиненных, и не может быть удален']));
         } else {
           Subordination::where('subordinate_id','=',$worker->id)->delete();
+          if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
+            unlink(public_path().'/img/photo/mini/'.$worker->photo);
+          }
+          if(file_exists(public_path().'/img/photo/'.$worker->photo)){
+            unlink(public_path().'/img/photo/'.$worker->photo);
+          }
           Worker::find($worker->id)->delete();
-          return 'Карточка '.$worker->table_number.' сотрудника удалена';
+          return Response::json(['data'=>'Карточка '.$worker->table_number.' сотрудника удалена']);
         }
     }
 }

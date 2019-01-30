@@ -28,6 +28,7 @@ class ListController extends Controller
             ->leftJoin('workers as wb', 'wb.id', '=', 's.head_id')
             ->select([
               "w.table_number",
+              "w.photo",
               "w.birthday",
               DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic) as nameWorker"),
               "w.reception_date",
@@ -78,6 +79,13 @@ class ListController extends Controller
       })
       ->filterColumn('salary', function ($query, $keyword) {
         $query->whereRaw("w.salary like ?", ["%$keyword%"]);
+      })
+      ->editColumn('photo', function ($worker) {
+        if(($worker->photo != null)&&(file_exists(public_path()."/img/photo/mini/".$worker->photo))){
+          return "../img/photo/mini/".$worker->photo;
+        } else {
+          return '../img/example_mini.jpg';
+        };
       })
       ->make(true);
     }
