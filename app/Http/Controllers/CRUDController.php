@@ -194,7 +194,7 @@ class CRUDController extends Controller
             Subordination::where('subordinate_id','=',$worker->id)->delete();
           }
 
-          if ($input['photodel']) {
+          if ($input['photodel'] && $worker->photo != null) {
             if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
               unlink(public_path().'/img/photo/mini/'.$worker->photo);
             }
