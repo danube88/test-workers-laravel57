@@ -67,7 +67,7 @@
           { data: 'table_number', name: 'table_number' },
           { data: 'photo', name: 'photo',
             render: function(data, type, row) {
-                return '<img src="'+data+'?'+Math.random()+'" width="70px" height="105px" />';
+                return '<img src="'+data+{{--/*'?'+Math.random()+*/--}}'" width="70px" height="105px" />';
               }, orderable: false, searchable: false },
           { data: 'nameWorker', name: 'nameWorker', width: '200px' },
           { data: 'position', name:'position' },

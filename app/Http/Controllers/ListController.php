@@ -81,8 +81,8 @@ class ListController extends Controller
         $query->whereRaw("w.salary like ?", ["%$keyword%"]);
       })
       ->editColumn('photo', function ($worker) {
-        if(($worker->photo != null)&&(file_exists(public_path()."img/photo/mini/".$worker->photo))){
-          return $worker->photo;
+        if(($worker->photo != null)&&(file_exists(public_path()."/img/photo/mini/".$worker->photo))){
+          return "../img/photo/mini/".$worker->photo;
         } else {
           return '../img/example_mini.jpg';
         };

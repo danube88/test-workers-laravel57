@@ -25,6 +25,11 @@
             <div class="col-6 col-sm-6 center">
               <label for="title">Фото</label>
               <div id="errorPhoto" class="d-none"></div>
+              <div class="cleanPhoto">
+                <button id="cleanPhoto" type="button" class="btn btn-secondary" data-placement="left" title="Удалить фото">
+                  <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+                </button>
+              </div>
               <img id="photo" src="../img/example.jpg" alt="..." width="200px" class="rounded mx-auto d-block img-fluid img-thumbnail"/>
               <sub>(*Ремомендация фото: 200х300px, размер файла не более 1МВ)</sub>
               </br></br>

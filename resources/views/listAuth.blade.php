@@ -66,9 +66,12 @@
     $('#add').tooltip();
     $('#cleanHead').tooltip();
     $('#cleanPosition').tooltip();
+    $('#cleanPhoto').tooltip();
 
     $('#editSave').tooltip();
     $('#delSave').tooltip();
+
+    var photodel = 0;
 
     var table = $('#tableWorkers').DataTable({
       processing: true,
@@ -82,7 +85,7 @@
           { data: 'table_number', name: 'table_number' },
           { data: 'photo', name: 'photo',
             render: function(data, type, row) {
-                return '<img src="'+data+/*'?'+Math.random()+*/'" width="70px" height="105px" />';
+                return '<img src="'+data+{{--/*'?'+Math.random()+*/--}}'" width="70px" height="105px" />';
               }, orderable: false, searchable: false },
           { data: 'nameWorker', name: 'nameWorker'},
           { data: 'position', name:'position' },
@@ -183,7 +186,7 @@
     });
 
     $(document).on('click', '#cleanHead', function(){
-      $('#headName').val('').attr('title', '');
+      $('#headName').val('');
     });
 
     $(document).on('click', '#addSave',function(){
@@ -223,6 +226,7 @@
       if (file) {
         form_data.append('photo', file);
       }
+      form_data.append('photodel', photodel);
       form_data.append('head_id', head_id);
       form_data.append('surname', $('#surname').val());
       form_data.append('name',$('#name').val());
@@ -287,9 +291,12 @@
               $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+data.errors.photo+'</div>');
               $('#errorPhoto').removeClass('d-none').addClass('d-block');
             }
+            if(data.errors.photodel){
+              console.log(data.errors.photodel);
+            }
           } else {
             $('#cardModal').modal('hide');
-            alert(data);
+            alert(data.data);
             cleanFieldModal();
             $('#tableWorkers').DataTable().ajax.reload();
           }
@@ -337,7 +344,8 @@
           $('#position').val(data.positionName);
           $('#salary').val(data.salary);
           $('#date').val(data.reception_date);
-          $('#photo').attr('src',data.photo/*+'?'+Math.random()*/);
+          $('#photo').attr('src',data.photo{{--/*+'?'+Math.random()*/--}});
+          photodel = 0;
           $('.cardName').html('ИЗМИНЕНИЕ');
 
           $('#addSave').attr('disabled',true);
@@ -419,6 +427,7 @@
       if (file) {
         form_edit.append('photo', file);
       }
+      form_edit.append('photodel', photodel);
       form_edit.append('_method', 'PUT');
       form_edit.append('head_id', head_id);
       form_edit.append('surname', $('#surname').val());
@@ -480,6 +489,13 @@
               $('#errorDate').html('<div class="alert alert-danger" role="alert">'+data.errors.reception_date+'</div>');
               $('#errorDate').removeClass('d-none').addClass('d-block');
             }
+            if(data.errors.photo){
+              $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+data.errors.photo+'</div>');
+              $('#errorPhoto').removeClass('d-none').addClass('d-block');
+            }
+            if(data.errors.photodel){
+              console.log(data.errors.photodel);
+            }
           } else {
             $('#cardModal').modal('hide');
             alert(data.data);
@@ -498,21 +514,29 @@
       if (input.files && input.files[0]) {
         if (input.files[0].type.match('image.*')) {
           if (input.files[0].size > 1048576) {
-            alert('размер файла более 1MB');
+            alert('Pазмер файла более 1MB');
           } else {
             var reader = new FileReader();
             reader.onload = function (e) {
               $('#photo').attr('src', e.target.result);
               $('.file').html(input.files[0].name);
+              photodel = 0;
             }
               reader.readAsDataURL(input.files[0]);
           }
         } else {
-          alert('ошибка, не изображение');
+          alert('Oшибка, не изображение');
         }
       } else {
         alert('Error!');
       }
+    });
+
+    $(document).on('click', '#cleanPhoto', function(){
+      $('#photo').attr('src','../img/example.jpg');
+      $('.file').html('Выберите файл');
+      $('#file').val('');
+      photodel = 1;
     });
 
     function hideFieldErrors(){
@@ -543,6 +567,7 @@
       $('#position').val('');
       $('#salary').val('');
       $('#date').val('');
+      photodel = 0;
     };
   });
 </script>
