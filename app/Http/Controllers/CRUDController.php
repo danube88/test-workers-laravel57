@@ -229,11 +229,13 @@ class CRUDController extends Controller
           return Response::json(array('errors' => ['data'=>'Данный сотрудник имеет подчиненных, и не может быть удален']));
         } else {
           Subordination::where('subordinate_id','=',$worker->id)->delete();
-          if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
-            unlink(public_path().'/img/photo/mini/'.$worker->photo);
-          }
-          if(file_exists(public_path().'/img/photo/'.$worker->photo)){
-            unlink(public_path().'/img/photo/'.$worker->photo);
+          if($worker->photo != NULL){
+            if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
+              unlink(public_path().'/img/photo/mini/'.$worker->photo);
+            }
+            if(file_exists(public_path().'/img/photo/'.$worker->photo)){
+              unlink(public_path().'/img/photo/'.$worker->photo);
+            }
           }
           Worker::find($worker->id)->delete();
           return Response::json(['data'=>'Карточка '.$worker->table_number.' сотрудника удалена']);
