@@ -376,7 +376,7 @@
           if (data.errors) {
             alert(data.errors.data);
           } else {
-            alert(data);
+            alert(data.data);
             cleanFieldModal();
             $('#cardModal').modal('hide');
             $('#tableWorkers').DataTable().ajax.reload();
