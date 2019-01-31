@@ -22,7 +22,7 @@
   <ul class="list-group Container" id="tree">
     @foreach ($workers as $worker)
       @if($worker->head_id == null)
-        <li id="{{ $worker->id }}" class="list-group-item Node IsRoot IsLast {{ ($worker->count != 0) ? 'ExpandOpen':'ExpandLeaf' }}">
+        <li id="{{ $worker->id }}" class="list-group-item Node IsRoot {{ ($worker->count != 0) ? 'ExpandOpen':'ExpandLeaf' }}">
         @if($worker->count >= 1)
           <div class="fa fa-minus-square-o fa-lg Expand"></div>
         @else
@@ -108,26 +108,43 @@
       }
 
       function onLoaded(data) {
-        var i = 0;
-        i = data.length;
+        //var i = 0;
+        //i = data.length;
         $.each(data, function(key, val) {
           var child = JSON.parse(val);
+          if(node.id == child.head) {
+            var li = document.createElement('li');
+            li.id = child.id;
 
-          var li = document.createElement('li');
-          li.id = child.id;
+            if(child.isFolder == 1) { li.className = "list-group-item Node Expand" + 'Closed';
+              li.innerHTML = '<div class="fa fa-plus-square-o fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
+            } else {
+              li.className = "list-group-item Node Expand" + 'Leaf';
+              li.innerHTML = '<div class="fa fa-minus fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
+            };
+            //if (key == i-1) { li.className += ' IsLast' };
 
-          if(child.isFolder == 1) { li.className = "list-group-item Node Expand" + 'Closed';
-            li.innerHTML = '<div class="fa fa-plus-square-o fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
-          } else {
-            li.className = "list-group-item Node Expand" + 'Leaf';
-            li.innerHTML = '<div class="fa fa-minus fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
-          };
-          if (key == i-1) { li.className += ' IsLast' };
-
-          //if (child.isFolder) {
+            //if (child.isFolder) {
             li.innerHTML += '<ul class="list-group Container"></ul>';
-          //};
-          node.getElementsByTagName('ul')[0].appendChild(li);
+            //};
+            node.getElementsByTagName('ul')[0].appendChild(li);
+          } else {
+            var elem = document.getElementById(child.head);
+            var li = document.createElement('li');
+            li.id = child.id;
+
+            if(child.isFolder == 1) { li.className = "list-group-item Node Expand" + 'Closed';
+              li.innerHTML = '<div class="fa fa-plus-square-o fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
+            } else {
+              li.className = "list-group-item Node Expand" + 'Leaf';
+              li.innerHTML = '<div class="fa fa-minus fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
+            };
+            //if (key == i-1) { li.className += ' IsLast' };
+
+            li.innerHTML += '<ul class="list-group Container"></ul>';
+
+            elem.getElementsByClassName('Container')[0].appendChild(li);
+          }
         });
 
         node.isLoaded = true;
