@@ -31,7 +31,7 @@
           <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i> Добавить
         </button>
       </div>
-      <br />
+      <br/>
       <div class="table-responsive">
         <table id="tableWorkers" class="table table-sm table-striped table-bordered" cellspacing="0">
           <thead>
@@ -51,15 +51,14 @@
     </div>
   </div>
 </div>
+@include('modal.card')
 @endsection
 
 @section('footer')
 @endsection
 
-@include('modal.card')
-
 @push('scripts')
-<script type="text/javascript">
+<script>
   $(document).ready(function() {
     $(".list").addClass('active');
 

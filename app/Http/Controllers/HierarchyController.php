@@ -35,8 +35,7 @@ class HierarchyController extends Controller
         $workers = $this->listWorkersForHierarchy($input['id']);
         $node = array();
         foreach ($workers as $worker) {
-          $subordination = DB::table('subordinations')->where('subordinations.head_id','=',$worker->id)->count();
-          $isFolder = ($subordination != 0)?1:0;
+          $isFolder = ($worker->count != 0)?1:0;
           $node[] = '{ "id": "'.$worker->id.'","head":"'.$worker->head_id.'","title": "<h6> '.$worker->name_position.'</h6>'.$worker->nameWorker.'","isFolder": "'.$isFolder.'"}';
         }
         return Response::json($node);

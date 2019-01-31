@@ -32,7 +32,7 @@
               </div>
               <img id="photo" src="../img/example.jpg" alt="..." width="200px" class="rounded mx-auto d-block img-fluid img-thumbnail"/>
               <sub>(*Ремомендация фото: 200х300px, размер файла не более 1МВ)</sub>
-              </br></br>
+              <br/><br/>
               <div class="custom-file">
                 <input type="file" class="custom-file-input" id="file" accept="image/*" lang="ru"/>
                 <label class="file custom-file-label" for="customFile">Выберите файл</label>
@@ -80,7 +80,7 @@
               <div class="input-group">
                 <input type="number" id="salary" class="form-control form-control-sm" step="0.01" value="0.00" />
                 <div class="input-group-append">
-                  <span class="input-group-text">&#8381</span>
+                  <span class="input-group-text">&#8381;</span>
                   <span class="input-group-text">0,00</span>
                 </div>
               </div>

@@ -22,7 +22,7 @@
   <ul class="list-group Container" id="tree">
     @foreach ($workers as $worker)
       @if($worker->head_id == null)
-        <li id="{{ $worker->id }}" class="list-group-item Node IsRoot {{ ($worker->count != 0) ? 'ExpandOpen':'ExpandLeaf' }}">
+        <li id="{{ $worker->id }}" class="list-group-item Node IsRoot {{ ($worker->count != 0) ? 'ExpandOpen':'ExpandLeaf' }}" draggable="{{(Auth::check())?'true':'false'}}">
         @if($worker->count >= 1)
           <div class="fa fa-minus-square-o fa-lg Expand"></div>
         @else
@@ -32,7 +32,7 @@
           <ul class="list-group Container">
             @foreach ($workers as $value)
               @if($value->head_id == $worker->id)
-              <li id="{{ $value->id }}" class="list-group-item Node {{ ($value->count != 0) ? 'ExpandClosed':'ExpandLeaf' }}">
+              <li id="{{ $value->id }}" class="list-group-item Node {{ ($value->count != 0) ? 'ExpandClosed':'ExpandLeaf' }}" draggable="{{(Auth::check())?'true':'false' }}">
                 <div class="fa {{ ($value->count != 0) ? 'fa-plus-square-o':'fa-minus' }} fa-lg Expand"></div>
                 <div class="Content"><h6>{!! $value->name_position !!}</h6>{!! $value->nameWorker !!}</div>
                 <ul class="list-group Container">
@@ -108,8 +108,6 @@
       }
 
       function onLoaded(data) {
-        //var i = 0;
-        //i = data.length;
         $.each(data, function(key, val) {
           var child = JSON.parse(val);
           if(node.id == child.head) {
@@ -122,11 +120,9 @@
               li.className = "list-group-item Node Expand" + 'Leaf';
               li.innerHTML = '<div class="fa fa-minus fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
             };
-            //if (key == i-1) { li.className += ' IsLast' };
 
-            //if (child.isFolder) {
             li.innerHTML += '<ul class="list-group Container"></ul>';
-            //};
+
             node.getElementsByTagName('ul')[0].appendChild(li);
           } else {
             var elem = document.getElementById(child.head);
@@ -139,7 +135,6 @@
               li.className = "list-group-item Node Expand" + 'Leaf';
               li.innerHTML = '<div class="fa fa-minus fa-lg Expand"></div><div class="Content">'+child.title+'</div>'
             };
-            //if (key == i-1) { li.className += ' IsLast' };
 
             li.innerHTML += '<ul class="list-group Container"></ul>';
 
@@ -204,6 +199,138 @@
       load(node);
 
     };
+    @if(Auth::check())
+    //{{--Drag and drop--}}
+    var dragged,id,idhead,tagName,elem,elemPar,elemParPar;
+    //{{--InternetExplorer--}}
+    if (window.Node && Node.prototype && !Node.prototype.contains) {
+      Node.prototype.contains = function (arg) {
+        return !!(this.compareDocumentPosition(arg) & 16)
+      }
+    }
+
+    document.addEventListener('dragstart',function(event){
+      dragged = event;
+      event.target.style.background = '#6f6f6f';
+    },false);
+
+    document.addEventListener('dragend',function(event){
+      event.target.style.background = '';
+    },false);
+
+    document.addEventListener("dragover", function(event) {
+      id = dragged.target.id;
+      idhead = dragged.target.parentNode.parentNode.id;
+      tagName = event.target.tagName;
+      elem = event.target;
+      elemPar = event.target.parentNode;
+      elemParPar = event.target.parentNode.parentNode;
+      event.preventDefault();
+      if (tagName == 'LI' && elem.id != id && elem.id != idhead) {
+        if(!dragged.target.contains(document.getElementById(elem.id))){
+          elem.style.background = "#636bd9";
+          event.dataTransfer.dropEffect = 'copy';
+        } else {
+          elem.style.background = "#be3333";
+        }
+      }else if(tagName == 'DIV' && elem.className == 'Content' && elemPar.id != id && elemPar.id != idhead) {
+        if(!dragged.target.contains(document.getElementById(elemPar.id))){
+          elemPar.style.background = "#636bd9";
+          event.dataTransfer.dropEffect = 'copy';
+        } else {
+          elemPar.style.background = "#be3333";
+        }
+      }else if(tagName == 'H6' && elemParPar.id != id && elemParPar.id != idhead) {
+        if(!dragged.target.contains(document.getElementById(elemParPar.id))){
+          elemParPar.style.background = "#636bd9";
+          event.dataTransfer.dropEffect = 'copy';
+        } else {
+          elemParPar.style.background = "#be3333";
+        }
+      }
+    }, false);
+
+    document.addEventListener("dragleave", function(event) {
+      id = dragged.target.id;
+      tagName = event.target.tagName;
+      elem = event.target;
+      elemPar = event.target.parentNode;
+      elemParPar = event.target.parentNode.parentNode;
+      if (tagName == 'LI'  && (elem.id != id)) {
+        elem.style.background = '';
+      }else if(tagName == 'DIV' && elem.className == 'Content' && (elemPar.id != id)) {
+        elemPar.style.background = '';
+      }else if(tagName == 'H6' && (elemParPar.id != id)) {
+        elemParPar.style.background = '';
+      }
+    }, false);
+
+    function ajaxForDrop(id,deg) {
+      $.ajax({
+        url: "{{ route('dragdrop') }}",
+        type: "POST",
+        data:{
+          'id':id,
+          'idged':deg
+        },
+        headers: {
+          'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (data) {
+          alert(data);
+        },
+        error: function (msg) {
+          alert('Ошибка');
+        }
+      });
+    }
+
+    function isDrop(elem,deg){
+      var d = deg.target.parentNode.parentNode;
+      if(!hasClass(elem,'ExpandClosed')){
+        ajaxForDrop(elem.id,deg.target.id);
+        elem.getElementsByTagName('ul')[0].appendChild(deg.target);
+        if (hasClass(elem,'ExpandLeaf')){
+          elem.className = elem.className.replace(/(^|\s)(ExpandLeaf)(\s|$)/,'$1ExpandOpen$3');
+          elem.getElementsByTagName('div')[0].className = elem.getElementsByTagName('div')[0].className.replace(/(^|\s)(fa-minus)(\s|$)/,'$1fa-minus-square-o$3');
+        }
+      } else if(hasClass(elem,'ExpandClosed') && elem.getElementsByTagName('li').length == 0){
+        ajaxForDrop(elem.id,deg.target.id);
+        deg.target.remove();
+      } else {
+        alert('Ошибка');
+      }
+      if(d.getElementsByClassName('Container')[0].getElementsByTagName('li').length == 0){
+        d.className = d.className.replace(/(^|\s)(ExpandOpen|ExpandClosed)(\s|$)/,'$1ExpandLeaf$3');
+        d.getElementsByTagName('div')[0].className = d.getElementsByTagName('div')[0].className.replace(/(^|\s)(fa-minus-square-o)(\s|$)/,'$1fa-minus$3');
+      }
+    }
+
+    document.addEventListener("drop", function(event) {
+      id = dragged.target.id;
+      idhead = dragged.target.parentNode.parentNode.id;
+      tagName = event.target.tagName;
+      elem = event.target;
+      elemPar = event.target.parentNode;
+      elemParPar = event.target.parentNode.parentNode;
+      if (tagName == 'LI' && elem.id != id && elem.id != idhead) {
+        elem.style.background = '';
+        if(!dragged.target.contains(document.getElementById(elem.id))){
+          isDrop(elem,dragged);
+        }
+      }else if (tagName == 'DIV' && elem.className == 'Content' && elemPar.id != id && elemPar.id != idhead) {
+        elemPar.style.background = '';
+        if(!dragged.target.contains(document.getElementById(elemPar.id))){
+          isDrop(elemPar,dragged);
+        }
+      }else if (tagName == 'H6' && elemParPar.id != id && elemParPar.id != idhead) {
+        elemParPar.style.background = '';
+        if(!dragged.target.contains(document.getElementById(elemParPar.id))){
+          isDrop(elemParPar,dragged);
+        }
+      }
+    }, false);
+  @endif
   });
 </script>
 @endpush

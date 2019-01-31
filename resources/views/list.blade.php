@@ -26,7 +26,7 @@
   <div class="row">
     <div class="col-12 col-sm-12">
       <h1 class="h2 page-header">Список сотрудников</h1>
-      <br />
+      <br/>
       <div class="table-responsive">
         <table id="tableWorkers" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
