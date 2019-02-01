@@ -31,6 +31,11 @@
           <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i> Добавить
         </button>
       </div>
+      <div class="btn-redistribution">
+        <button id="redistribution" type="button" class="btn btn-primary" data-toggle="modal" data-target="#redistributionModal" data-placement="top" title="Перераспределение сотрудников">
+          <i class="fa fa-refresh fa-lg" aria-hidden="true"></i> Перераспределение
+        </button>
+      </div>
       <br/>
       <div class="table-responsive">
         <table id="tableWorkers" class="table table-sm table-striped table-bordered" cellspacing="0">
@@ -52,6 +57,7 @@
   </div>
 </div>
 @include('modal.card')
+@include('modal.redistribution')
 @endsection
 
 @section('footer')
@@ -62,7 +68,12 @@
   $(document).ready(function() {
     $(".list").addClass('active');
 
+    $('[data-toggle="popover"]').popover({
+      trigger: 'focus'
+    })
+
     $('#add').tooltip();
+    $('#redistribution').tooltip();
     $('#cleanHead').tooltip();
     $('#cleanPosition').tooltip();
     $('#cleanPhoto').tooltip();
@@ -121,7 +132,7 @@
 
     $(document).on('click', '#add', function(){
       $('.cardName').html('ДОБАВЛЕНИЕ');
-      cleanFieldModal();
+      cleanCardFieldModal();
       hideFieldErrors();
       $('#addSave').removeAttr('disabled');
       $('#addSave').removeClass('d-none').addClass('d-block');
@@ -250,53 +261,11 @@
         },
         success: function (data) {
           if (data.errors) {
-            if(data.errors.table_number){
-              $('#errorTableNumber').html('<div class="alert alert-danger" role="alert">'+data.errors.table_number+'</div>');
-              $('#errorTableNumber').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.head_id){
-              $('#errorHeadName').html('<div class="alert alert-danger" role="alert">'+data.errors.head_id+'</div>');
-              $('#errorHeadName').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.surname){
-              $('#errorSurname').html('<div class="alert alert-danger" role="alert">'+data.errors.surname+'</div>');
-              $('#errorSurname').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.name){
-              $('#errorName').html('<div class="alert alert-danger" role="alert">'+data.errors.name+'</div>');
-              $('#errorName').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.patronymic){
-              $('#errorPatronymic').html('<div class="alert alert-danger" role="alert">'+data.errors.patronymic+'</div>');
-              $('#errorPatronymic').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.birthday){
-              $('#errorBirthday').html('<div class="alert alert-danger" role="alert">'+data.errors.birthday+'</div>');
-              $('#errorBirthday').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.position){
-              $('#errorPosition').html('<div class="alert alert-danger" role="alert">'+data.errors.position+'</div>');
-              $('#errorPosition').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.salary){
-              $('#errorSalary').html('<div class="alert alert-danger" role="alert">'+data.errors.salary+'</div>');
-              $('#errorSalary').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.reception_date){
-              $('#errorDate').html('<div class="alert alert-danger" role="alert">'+data.errors.reception_date+'</div>');
-              $('#errorDate').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.photo){
-              $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+data.errors.photo+'</div>');
-              $('#errorPhoto').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.photodel){
-              console.log(data.errors.photodel);
-            }
+            errorOutput(data.errors);
           } else {
             $('#cardModal').modal('hide');
             alert(data.data);
-            cleanFieldModal();
+            cleanCardFieldModal();
             $('#tableWorkers').DataTable().ajax.reload();
           }
         },
@@ -376,7 +345,7 @@
             alert(data.errors.data);
           } else {
             alert(data.data);
-            cleanFieldModal();
+            cleanCardFieldModal();
             $('#cardModal').modal('hide');
             $('#tableWorkers').DataTable().ajax.reload();
           }
@@ -452,53 +421,11 @@
         },
         success: function (data) {
           if (data.errors) {
-            if(data.errors.table_number){
-              $('#errorTableNumber').html('<div class="alert alert-danger" role="alert">'+data.errors.table_number+'</div>');
-              $('#errorTableNumber').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.head_id){
-              $('#errorHeadName').html('<div class="alert alert-danger" role="alert">'+data.errors.head_id+'</div>');
-              $('#errorHeadName').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.surname){
-              $('#errorSurname').html('<div class="alert alert-danger" role="alert">'+data.errors.surname+'</div>');
-              $('#errorSurname').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.name){
-              $('#errorName').html('<div class="alert alert-danger" role="alert">'+data.errors.name+'</div>');
-              $('#errorName').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.patronymic){
-              $('#errorPatronymic').html('<div class="alert alert-danger" role="alert">'+data.errors.patronymic+'</div>');
-              $('#errorPatronymic').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.birthday){
-              $('#errorBirthday').html('<div class="alert alert-danger" role="alert">'+data.errors.birthday+'</div>');
-              $('#errorBirthday').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.position){
-              $('#errorPosition').html('<div class="alert alert-danger" role="alert">'+data.errors.position+'</div>');
-              $('#errorPosition').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.salary){
-              $('#errorSalary').html('<div class="alert alert-danger" role="alert">'+data.errors.salary+'</div>');
-              $('#errorSalary').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.reception_date){
-              $('#errorDate').html('<div class="alert alert-danger" role="alert">'+data.errors.reception_date+'</div>');
-              $('#errorDate').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.photo){
-              $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+data.errors.photo+'</div>');
-              $('#errorPhoto').removeClass('d-none').addClass('d-block');
-            }
-            if(data.errors.photodel){
-              console.log(data.errors.photodel);
-            }
+            errorOutput(data.errors);
           } else {
             $('#cardModal').modal('hide');
             alert(data.data);
-            cleanFieldModal();
+            cleanCardFieldModal();
             $('#tableWorkers').DataTable().ajax.reload();
           }
         },
@@ -538,6 +465,139 @@
       photodel = 1;
     });
 
+    $(document).on('click', '#redistribution',function(){
+      cleanRedistributionFieldModal();
+    });
+
+    $(document).on('click', '#redisCleanHead', function(){
+      cleanRedistributionFieldModal();
+    });
+
+    $(document).on('click', '#atredisCleanHead', function(){
+      $('#atredisHeadName').val('');
+    });
+
+    $("#redisHeadName").change(function() {
+      $('#atredisHeadName').val('');
+      var val = $(this).val();
+      var datalist = $('#redislistWorkers').parent();
+      var selected = datalist.find('[value="'+val+'"]');
+      if(selected['0'].value != '') {
+        $.ajax({
+          url: "{{ route('listRedistributionWorkers') }}",
+          type: "POST",
+          data:{
+            'id':selected.data('id'),
+            'position':selected.data('idpos'),
+          },
+          headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function (data) {
+            if(data != ''){
+              $('#atredislistWorkers').html(data);
+              $(".atredisHeadName").removeClass('d-none').addClass('d-block');
+            } else {
+              alert('Нет подходящих сотрудников');
+            }
+          },
+          error: function (msg) {
+            alert('Errors');
+          }
+        });
+      } else {
+        $(".atredisHeadName").removeClass('d-block').addClass('d-none');
+      }
+    });
+
+    $(document).on('click','#redisSave',function(){
+      var oneDataList = $('#redislistWorkers').parent();
+      var oneHead = oneDataList.find('[value="'+$('#redisHeadName').val()+'"]');
+
+      var twoDataList = $('#atredislistWorkers').parent();
+      var twoHead = twoDataList.find('[value="'+$('#atredisHeadName').val()+'"]');
+
+      if(oneHead.length < 0 || twoHead.leght < 0) {
+        alert('Errors: Данные не верные');
+      } else {
+        if(oneHead['0'].value != '' && twoHead['0'].value != '') {
+          var oneId = oneHead.data('id');
+          var twoId = twoHead.data('id');
+          $.ajax({
+            url: "{{ route('redistribution') }}",
+            type: "POST",
+            data:{
+              'oneId':oneId,
+              'twoId':twoId,
+            },
+            headers: {
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (data) {
+              if(data.errors){
+                alert(data.errors);
+              }
+              alert(data.data);
+              $('#redistributionModal').modal('hide');
+              cleanRedistributionFieldModal();
+              $('#tableWorkers').DataTable().ajax.reload();
+            },
+            error: function (msg) {
+              alert('Errors');
+            }
+          });
+        } else {
+          alert('Errors: Не все поля заполнены!');
+        }
+      }
+    });
+
+    function errorOutput(error){
+      if(error.table_number){
+        $('#errorTableNumber').html('<div class="alert alert-danger" role="alert">'+error.table_number+'</div>');
+        $('#errorTableNumber').removeClass('d-none').addClass('d-block');
+      }
+      if(error.head_id){
+        $('#errorHeadName').html('<div class="alert alert-danger" role="alert">'+error.head_id+'</div>');
+        $('#errorHeadName').removeClass('d-none').addClass('d-block');
+      }
+      if(error.surname){
+        $('#errorSurname').html('<div class="alert alert-danger" role="alert">'+error.surname+'</div>');
+        $('#errorSurname').removeClass('d-none').addClass('d-block');
+      }
+      if(error.name){
+        $('#errorName').html('<div class="alert alert-danger" role="alert">'+error.name+'</div>');
+        $('#errorName').removeClass('d-none').addClass('d-block');
+      }
+      if(error.patronymic){
+        $('#errorPatronymic').html('<div class="alert alert-danger" role="alert">'+error.patronymic+'</div>');
+        $('#errorPatronymic').removeClass('d-none').addClass('d-block');
+      }
+      if(error.birthday){
+        $('#errorBirthday').html('<div class="alert alert-danger" role="alert">'+error.birthday+'</div>');
+        $('#errorBirthday').removeClass('d-none').addClass('d-block');
+      }
+      if(error.position){
+        $('#errorPosition').html('<div class="alert alert-danger" role="alert">'+error.position+'</div>');
+        $('#errorPosition').removeClass('d-none').addClass('d-block');
+      }
+      if(error.salary){
+        $('#errorSalary').html('<div class="alert alert-danger" role="alert">'+error.salary+'</div>');
+        $('#errorSalary').removeClass('d-none').addClass('d-block');
+      }
+      if(error.reception_date){
+        $('#errorDate').html('<div class="alert alert-danger" role="alert">'+error.reception_date+'</div>');
+        $('#errorDate').removeClass('d-none').addClass('d-block');
+      }
+      if(error.photo){
+        $('#errorPhoto').html('<div class="alert alert-danger" role="alert">'+error.photo+'</div>');
+        $('#errorPhoto').removeClass('d-none').addClass('d-block');
+      }
+      if(error.photodel){
+        console.log(error.photodel);
+      }
+    }
+
     function hideFieldErrors(){
       $('#errorTableNumber').removeClass('d-block').addClass('d-none');
       $('#errorHeadName').removeClass('d-block').addClass('d-none');
@@ -551,7 +611,14 @@
       $('#errorPhoto').removeClass('d-block').addClass('d-none');
     }
 
-    function cleanFieldModal() {
+    function cleanRedistributionFieldModal() {
+      $('#redisHeadName').val('');
+      $('#atredisHeadName').val('');
+      $('#atredislistWorkers').html('');
+      $(".atredisHeadName").removeClass('d-block').addClass('d-none');
+    }
+
+    function cleanCardFieldModal() {
       $('#headName').val('');
       $('#headName').attr('disabled',true);
       $('#listHead').html('');

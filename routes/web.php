@@ -36,4 +36,6 @@ Route::group(['prefix'=>'home'],function(){
   Route::get('/data/head', 'HomeController@listHead')->name('listHead');
   Route::get('/data/worker', 'HomeController@dataWorker')->name('dataWorker');
   Route::post('/hierarchy/drop', 'DragAndDropController@drop')->name('dragdrop');
+  Route::post('/redistribution', 'HomeController@redistribution')->name('redistribution');
+  Route::post('/redistribution/data/workers', 'HomeController@listHeadRedistribution')->name('listRedistributionWorkers');
 });

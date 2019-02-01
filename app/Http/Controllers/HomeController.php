@@ -8,6 +8,7 @@ use DB;
 use DataTables;
 use App\Position;
 use App\Worker;
+use App\Subordination;
 use Validator;
 use Response;
 
@@ -32,7 +33,18 @@ class HomeController extends Controller
     {
         if(view()->exists('listAuth')){
           $positions = Position::all();
-          return view('listAuth',['positions'=>$positions]);
+          $guide = DB::table('workers')
+                    ->leftJoin('positions', 'positions.id', '=', 'workers.position_id')
+                    ->where('positions.level','<=','4')
+                    ->select(
+                      'workers.id',
+                      'workers.table_number',
+                      DB::raw("CONCAT(workers.surname,' ',workers.name,' ',workers.patronymic) as nameWorker"),
+                      'positions.id as id_p',
+                      'positions.name_position')
+                    ->orderBy('positions.id','asc')
+                    ->get();
+          return view('listAuth',['positions'=>$positions,'guide'=>$guide]);
         } else {
           abort(404);
         }
@@ -183,6 +195,56 @@ class HomeController extends Controller
         }
         $worker->listHead = $listHead;
         return Response::json($worker);
+      }
+    }
+
+    public function listHeadRedistribution(Request $request)
+    {
+      $input = $request->except('_token');
+
+      $rules =
+      [
+          'id' => 'required|numeric',
+          'position' => 'required|numeric'
+      ];
+      $validator = Validator::make($input, $rules);
+      if ($validator->fails()) {
+        return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+      } else {
+        $guide = DB::table('workers')
+                  ->leftJoin('positions', 'positions.id', '=', 'workers.position_id')
+                  ->where('positions.id','=',$input['position'])
+                  ->where('workers.id','!=',$input['id'])
+                  ->select(
+                    'workers.id',
+                    'workers.table_number',
+                    DB::raw("CONCAT(workers.surname,' ',workers.name,' ',workers.patronymic) as nameWorker"),
+                    'positions.id as id_p',
+                    'positions.name_position')
+                  ->get();
+        $array = '';
+        foreach ($guide as $value) {
+          $array = $array."<option data-id=\"$value->id\" data-idpos=\"$value->id_p\" value=\"$value->table_number: $value->nameWorker/$value->name_position\"></option>";
+        }
+        return Response::json($array);
+      }
+    }
+
+    public function redistribution(Request $request)
+    {
+      $input = $request->except('_token');
+
+      $rules =
+      [
+          'oneId' => 'required|numeric',
+          'twoId' => 'required|numeric'
+      ];
+      $validator = Validator::make($input, $rules);
+      if ($validator->fails()) {
+        return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+      } else {
+        Subordination::where('head_id',$input['oneId'])->update(['head_id'=>$input['twoId']]);
+        return Response::json(array('data' =>'Перераспределение прошло успешно!'));
       }
     }
 

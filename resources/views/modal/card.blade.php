@@ -22,7 +22,7 @@
       <div class="modal-body">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-6 col-sm-6 center">
+            <div class="col-12 col-sm-6 center">
               <label for="title">Фото</label>
               <div id="errorPhoto" class="d-none"></div>
               <div class="cleanPhoto">
@@ -38,7 +38,7 @@
                 <label class="file custom-file-label" for="customFile">Выберите файл</label>
               </div>
             </div>
-            <div class="col-6 col-sm-6">
+            <div class="col-12 col-sm-6">
               {{ Form::label('title','Фамилия') }}
               <div id="errorSurname" class="d-none"></div>
               {{ Form::text('surname',null,['id'=>'surname','class'=>'form-control form-control-sm','placeholder'=>'Введите: Фамилию']) }}
@@ -85,7 +85,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-sm-12">
+            <div class="col-12">
               <label for="title">Начальник (Таб.номер.Ф.И.О. / должность)</label>
               <div class="input-group">
                 <div id="errorHeadName" class="d-none"></div>
